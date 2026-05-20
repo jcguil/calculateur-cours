@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Coûts - Unités Pondérées & Ventilation</title>
+    <style>
+        :root {
+            --color-green: rgb(179, 206, 53);
+            --color-orange: rgb(213, 137, 37);
+            --color-blue: rgb(98, 180, 234);
+            --color-dark: #333;
+            --color-light: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f5f0;
+            color: var(--color-dark);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .header-zone {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--color-green);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            font-size: 20px;
+            border-left: 5px solid var(--color-blue);
+            padding-left: 10px;
+        }
+
+        .btn-calcul {
+            background-color: var(--color-orange);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .btn-calcul:hover {
+            background-color: #c97a1d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: var(--color-green);
+            color: white;
+            font-weight: 600;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th.theme-header {
+            background-color: #555;
+        }
+
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        tr:nth-child(even) td {
+            background-color: var(--color-light);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        input[type="number"] {
+            text-align: right;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 5px rgba(98, 180, 234, 0.5);
+        }
+
+        .row-total td {
+            background-color: #eaedd5 !important;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            background-color: #eef7fc;
+            border: 1px solid var(--color-blue);
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .budget-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .budget-box label {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .budget-box input {
+            font-size: 15px;
+            font-weight: bold;
+            border: 2px solid var(--color-blue);
+            padding: 6px;
+        }
+
+        .badge-orange {
+            background-color: var(--color-orange);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-zone">
+        <h1>Outil de Calcul et de Ventilation Spécifique</h1>
+        <button class="btn-calcul" onclick="calculer()">⚙️ Lancer les calculs</button>
+    </div>
+
+    <!-- TABLEAU 1 : Saisie et Calculs des Unités Pondérées & % Relatifs -->
+    <h2>1. Saisie des données de base</h2>
+    <table id="mainTable">
+        <thead>
+            <tr>
+                <th rowspan="2">Atelier</th>
+                <th rowspan="2">Unité</th>
+                <th colspan="2" class="theme-header">Mécanisation</th>
+                <th colspan="2" class="theme-header">Bâtiment & Inst.</th>
+                <th colspan="2" class="theme-header">Frais Divers Gest.</th>
+                <th colspan="2" class="theme-header">Frais Financiers</th>
+                <th colspan="2" class="theme-header">Main d'œuvre</th>
+            </tr>
+            <tr>
+                <th>Coef</th><th>UP / %</th>
+                <th>Coef</th><th>UP / %</th>
+                <th>Coef</th><th>UP / %</th>
+                <th>Coef</th><th>UP / %</th>
+                <th>Coef</th><th>UP / %</th>
+            </tr>
+        </thead>
+        <tbody id="inputRows">
+            <!-- Ligne 1 -->
+            <tr class="data-row">
+                <td><input type="text" class="input-atelier" value="Atelier Lait"></td>
+                <td><input type="number" class="input-unite" value="100"></td>
+                <td><input type="number" class="input-coef-0" value="1.2" step="0.1"></td><td class="res-up-0 text-right">0</td>
+                <td><input type="number" class="input-coef-1" value="1.5" step="0.1"></td><td class="res-up-1 text-right">0</td>
+                <td><input type="number" class="input-coef-2" value="1.0" step="0.1"></td><td class="res-up-2 text-right">0</td>
+                <td><input type="number" class="input-coef-3" value="0.8" step="0.1"></td><td class="res-up-3 text-right">0</td>
+                <td><input type="number" class="input-coef-4" value="2.0" step="0.1"></td><td class="res-up-4 text-right">0</td>
+            </tr>
+            <!-- Ligne 2 -->
+            <tr class="data-row">
+                <td><input type="text" class="input-atelier" value="SFP Lait"></td>
+                <td><input type="number" class="input-unite" value="50"></td>
+                <td><input type="number" class="input-coef-0" value="1.5" step="0.1"></td><td class="res-up-0 text-right">0</td>
+                <td><input type="number" class="input-coef-1" value="1.0" step="0.1"></td><td class="res-up-1 text-right">0</td>
+                <td><input type="number" class="input-coef-2" value="1.1" step="0.1"></td><td class="res-up-2 text-right">0</td>
+                <td><input type="number" class="input-coef-3" value="0.5" step="0.1"></td><td class="res-up-3 text-right">0</td>
+                <td><input type="number" class="input-coef-4" value="1.5" step="0.1"></td><td class="res-up-4 text-right">0</td>
+            </tr>
+            <!-- Ligne 3 -->
+            <tr class="data-row">
+                <td><input type="text" class="input-atelier" value="Atelier Blé"></td>
+                <td><input type="number" class="input-unite" value="80"></td>
+                <td><input type="number" class="input-coef-0" value="2.0" step="0.1"></td><td class="res-up-0 text-right">0</td>
+                <td><input type="number" class="input-coef-1" value="0.5" step="0.1"></td><td class="res-up-1 text-right">0</td>
+                <td><input type="number" class="input-coef-2" value="1.0" step="0.1"></td><td class="res-up-2 text-right">0</td>
+                <td><input type="number" class="input-coef-3" value="1.2" step="0.1"></td><td class="res-up-3 text-right">0</td>
+                <td><input type="number" class="input-coef-4" value="0.8" step="0.1"></td><td class="res-up-4 text-right">0</td>
+            </tr>
+            <!-- Ligne 4 -->
+            <tr class="data-row">
+                <td><input type="text" class="input-atelier" value="Culture Maïs"></td>
+                <td><input type="number" class="input-unite" value="40"></td>
+                <td><input type="number" class="input-coef-0" value="1.8" step="0.1"></td><td class="res-up-0 text-right">0</td>
+                <td><input type="number" class="input-coef-1" value="0.4" step="0.1"></td><td class="res-up-1 text-right">0</td>
+                <td><input type="number" class="input-coef-2" value="1.0" step="0.1"></td><td class="res-up-2 text-right">0</td>
+                <td><input type="number" class="input-coef-3" value="1.0" step="0.1"></td><td class="res-up-3 text-right">0</td>
+                <td><input type="number" class="input-coef-4" value="1.0" step="0.1"></td><td class="res-up-4 text-right">0</td>
+            </tr>
+            <!-- Ligne 5 -->
+            <tr class="data-row">
+                <td><input type="text" class="input-atelier" value="Autre SFP"></td>
+                <td><input type="number" class="input-unite" value="10"></td>
+                <td><input type="number" class="input-coef-0" value="1.0" step="0.1"></td><td class="res-up-0 text-right">0</td>
+                <td><input type="number" class="input-coef-1" value="1.0" step="0.1"></td><td class="res-up-1 text-right">0</td>
+                <td><input type="number" class="input-coef-2" value="1.0" step="0.1"></td><td class="res-up-2 text-right">0</td>
+                <td><input type="number" class="input-coef-3" value="1.0" step="0.1"></td><td class="res-up-3 text-right">0</td>
+                <td><input type="number" class="input-coef-4" value="1.0" step="0.1"></td><td class="res-up-4 text-right">0</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="row-total">
+                <td colspan="2">Somme totale des UP :</td>
+                <td id="total-mec" class="text-right">0</td><td></td>
+                <td id="total-bat" class="text-right">0</td><td></td>
+                <td id="total-ges" class="text-right">0</td><td></td>
+                <td id="total-fin" class="text-right">0</td><td></td>
+                <td id="total-mo" class="text-right">0</td><td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- ZONE Saisie des Enveloppes Budgétaires par variable -->
+    <h2>2. Valeurs € Exploitation par Thématique</h2>
+    <div class="budget-grid">
+        <div class="budget-box">
+            <label>€ Mécanisation</label>
+            <input type="number" id="euro-mec" value="15000">
+        </div>
+        <div class="budget-box">
+            <label>€ Bâtiments & Inst.</label>
+            <input type="number" id="euro-bat" value="25000">
+        </div>
+        <div class="budget-box">
+            <label>€ Frais Divers Gestion</label>
+            <input type="number" id="euro-ges" value="8000">
+        </div>
+        <div class="budget-box">
+            <label>€ Frais Financiers</label>
+            <input type="number" id="euro-fin" value="5000">
+        </div>
+        <div class="budget-box">
+            <label>€ Main d'œuvre</label>
+            <input type="number" id="euro-mo" value="30000">
+        </div>
+    </div>
+
+    <!-- TABLEAU 3 : Synthèse Finale avec Agrégation -->
+    <h2>3. Synthèse Finale & Agrégation des Centres Principaux</h2>
+    <div id="containerSynthese"></div>
+</div>
+
+<script>
+    const thématiques = [
+        { name: "Mécanisation", id: "mec" },
+        { name: "Bâtiment et Installation", id: "bat" },
+        { name: "Frais Divers de Gestion", id: "ges" },
+        { name: "Frais Financiers", id: "fin" },
+        { name: "Main d'œuvre", id: "mo" }
+    ];
+
+    const exclusionsMots = ["ET", "DE", "LE", "LA", "LES", "DU", "UN", "UNE", "POUR", "PAR", "ATELIER", "CULTURE", "SFP"];
+
+    function extraireMotsCles(texte) {
+        return texte.toUpperCase()
+            .trim()
+            .replace(/[^A-ZÀ-ÖØ-ß ]/g, " ")
+            .split(/\s+/)
+            .filter(mot => mot.length > 2 && !exclusionsMots.includes(mot));
+    }
+
+    function detecterGroupements(ateliers) {
+        let groupes = {}; 
+        let structureGroupes = [];
+        let affectesAGroupes = new Set();
+
+        for (let i = 0; i < ateliers.length; i++) {
+            if (!ateliers[i] || ateliers[i].trim() === "") continue;
+            let motsI = extraireMotsCles(ateliers[i]);
+
+            for (let j = i + 1; j < ateliers.length; j++) {
+                if (!ateliers[j] || ateliers[j].trim() === "") continue;
+                let motsJ = extraireMotsCles(ateliers[j]);
+                
+                let intersection = motsI.filter(m => motsJ.includes(m));
+
+                if (intersection.length > 0) {
+                    let termeCommun = intersection[0].toLowerCase();
+                    if (!groupes[termeCommun]) {
+                        groupes[termeCommun] = new Set();
+                    }
+                    groupes[termeCommun].add(i);
+                    groupes[termeCommun].add(j);
+                    affectesAGroupes.add(i);
+                    affectesAGroupes.add(j);
+                }
+            }
+        }
+
+        for (let terme in groupes) {
+            structureGroupes.push({
+                libelle: "atelier " + terme,
+                indices: Array.from(groupes[terme]),
+                isGroup: true
+            });
+        }
+
+        for (let i = 0; i < ateliers.length; i++) {
+            if (!ateliers[i] || ateliers[i].trim() === "") continue;
+            if (!affectesAGroupes.has(i)) {
+                structureGroupes.push({
+                    libelle: ateliers[i],
+                    indices: [i],
+                    isGroup: false
+                });
+            }
+        }
+
+        return structureGroupes;
+    }
+
+    function calculer() {
+        const rows = document.querySelectorAll('.data-row');
+        let donnees = [];
+        let reconstructionNoms = [];
+        let sommeUP = [0, 0, 0, 0, 0];
+
+        // 1. Première passe : lecture et calcul des Unités Pondérées brutes
+        rows.forEach((row) => {
+            let nomAtelier = row.querySelector('.input-atelier').value.trim();
+            let unite = parseFloat(row.querySelector('.input-unite').value) || 0;
+            
+            reconstructionNoms.push(nomAtelier);
+
+            let rowData = { nom: nomAtelier, unite: unite, ups: [], pourcents: [] };
+
+            for (let t = 0; t < 5; t++) {
+                let coef = parseFloat(row.querySelector(`.input-coef-${t}`).value) || 0;
+                let up = unite * coef;
+                rowData.ups.push(up);
+                sommeUP[t] += up;
+            }
+            donnees.push(rowData);
+        });
+
+        // Mise à jour de la ligne "Somme totale des UP" en bas
+        document.getElementById('total-mec').innerText = sommeUP[0].toFixed(1);
+        document.getElementById('total-bat').innerText = sommeUP[1].toFixed(1);
+        document.getElementById('total-ges').innerText = sommeUP[2].toFixed(1);
+        document.getElementById('total-fin').innerText = sommeUP[3].toFixed(1);
+        document.getElementById('total-mo').innerText = sommeUP[4].toFixed(1);
+
+        // 2. Deuxième passe : Calcul exact des % et affichage immédiat dans le premier tableau
+        rows.forEach((row, i) => {
+            for (let t = 0; t < 5; t++) {
+                let up = donnees[i].ups[t];
+                let pct = sommeUP[t] > 0 ? (up / sommeUP[t]) * 100 : 0;
+                donnees[i].pourcents.push(pct);
+                
+                // Ciblage direct et sécurisé de la cellule de résultat de cette ligne
+                let cellResultat = row.querySelector(`.res-up-${t}`);
+                if (cellResultat) {
+                    cellResultat.innerHTML = `${up.toFixed(1)} <br><span class="badge-orange">${pct.toFixed(1)}%</span>`;
+                }
+            }
+        });
+
+        // 3. Déclenchement automatique des agrégations par mot-clé
+        let planRegroupement = detecterGroupements(reconstructionNoms);
+
+        // 4. Construction et affichage des tables de synthèses par Variable
+        const container = document.getElementById('containerSynthese');
+        container.innerHTML = ""; 
+
+        thématiques.forEach((theme, tIdx) => {
+            let budgetSpecifique = parseFloat(document.getElementById(`euro-${theme.id}`).value) || 0;
+
+            let htmlTable = `
+                <div style="margin-bottom: 35px; background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
+                    <h3 style="color:var(--color-orange); margin-top:0;">Variable : ${theme.name} (Budget : ${budgetSpecifique.toLocaleString('fr-FR')} €)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Atelier Principal / Agrégé</th>
+                                <th class="text-right">Valeur Temp. Référence</th>
+                                <th class="text-right">% Global Agrégé</th>
+                                <th class="text-right">Valeur Affectée (Arrondi à 1€)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            let totalPct = 0;
+            let totalEuro = 0;
+
+            planRegroupement.forEach(groupe => {
+                let pctAgrege = 0;
+                groupe.indices.forEach(idx => {
+                    pctAgrege += donnees[idx].pourcents[tIdx];
+                });
+
+                let valeurAffectee = Math.round(budgetSpecifique * (pctAgrege / 100));
+                
+                totalPct += pctAgrege;
+                totalEuro += valeurAffectee;
+
+                htmlTable += `
+                    <tr>
+                        <td class="font-bold">${groupe.libelle.toUpperCase()} ${groupe.isGroup ? '<span style="font-weight:normal; font-style:italic; font-size:11px; color:var(--color-orange);">(Agrégé)</span>' : ''}</td>
+                        <td class="text-right">${budgetSpecifique.toLocaleString('fr-FR')} €</td>
+                        <td class="text-right font-bold" style="color:var(--color-orange);">${pctAgrege.toFixed(1)} %</td>
+                        <td class="text-right font-bold" style="background-color:#eef7fc;">${valeurAffectee.toLocaleString('fr-FR')} €</td>
+                    </tr>
+                `;
+            });
+
+            htmlTable += `
+                            <tr class="row-total">
+                                <td>TOTAL DU CENTRE :</td>
+                                <td class="text-right">-</td>
+                                <td class="text-right">${Math.round(totalPct)} %</td>
+                                <td class="text-right">${totalEuro.toLocaleString('fr-FR')} €</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML += htmlTable;
+        });
+    }
+
+    // Écouteurs d'évènements pour recalculer automatiquement dès qu'une case change
+    document.addEventListener("input", function(e) {
+        if(e.target.tagName === "INPUT") {
+            calculer();
+        }
+    });
+
+    // Lancement automatique immédiat au démarrage
+    window.onload = function() {
+        calculer();
+    };
+</script>
+
+</body>
+</html>
