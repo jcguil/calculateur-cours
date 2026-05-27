@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Cohérence Modulaire - Exploitation Support</title>
+    <style>
+        :root {
+            --green-farm: rgb(179, 206, 53);
+            --orange-farm: rgb(213, 137, 37);
+            --blue-farm: rgb(98, 180, 234);
+            --red-alert: #e74c3c;
+            --dark-gray: #2c3e50;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: var(--dark-gray);
+            border-bottom: 3px solid var(--blue-farm);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .intro {
+            background-color: #ebf5fb;
+            border-left: 4px solid var(--blue-farm);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 900px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+
+        .panel {
+            background: #fdfdfd;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            color: #34495e;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: var(--blue-farm);
+        }
+
+        .badge-value {
+            background: var(--dark-gray);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 55px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Investissements modulaires style */
+        .investment-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .inv-details h4 {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #1e293b;
+        }
+
+        .inv-details p {
+            margin: 2px 0 0 0;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .select-qty {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            font-weight: bold;
+            color: var(--dark-gray);
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+
+        .select-qty:focus {
+            border-color: var(--blue-farm);
+            outline: none;
+        }
+
+        .indicator {
+            margin-bottom: 22px;
+        }
+
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            height: 18px;
+            border-radius: 9px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .feedback-box {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            font-style: italic;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .status-ok { background-color: rgba(179, 206, 53, 0.2); color: #4d5a11; }
+        .status-warn { background-color: rgba(213, 137, 37, 0.2); color: #784a10; }
+        .status-crit { background-color: rgba(231, 76, 60, 0.2); color: #7f1d1d; }
+        .status-info { background-color: rgba(98, 180, 234, 0.2); color: #1a4663; }
+
+        .pedagogy-zone {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .pedagogy-zone h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .impact-list {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .impact-badge {
+            background: #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Simulateur de Cohérence Modulaire : Ajustement des Moyens</h1>
+    
+    <div class="intro">
+        <strong>Approche Par Lots d'Investissement :</strong> Si vos objectifs techniques font saturer les bâtiments, les terres ou la main-d'œuvre, ajustez la structure. Les exploitants cotisent sur une base de <strong>2 200 h/an</strong> tandis que les salariés sont comptés sur une base réglementaire de <strong>1 600 h/an</strong>.
+    </div>
+
+    <div class="grid-3">
+        <div class="panel">
+            <h2>1. Objectifs Techniques & Humains (Flux)</h2>
+            
+            <div class="control-group">
+                <label for="brebis">Effectif global de Brebis (Normal initial : 230)</label>
+                <div class="slider-container">
+                    <input type="range" id="brebis" min="130" max="450" step="5" value="223">
+                    <span id="brebis-val" class="badge-value">223</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="umo">Main-d'œuvre Exploitants (Base : 2 200 h/an/UMO)</label>
+                <div class="slider-container">
+                    <input type="range" id="umo" min="0.80" max="2.00" step="0.05" value="1.44">
+                    <span id="umo-val" class="badge-value">1.44</span>
+                </div>
+                <small style="color:#7f8c8d;">Situation initiale de l'exploitation support : 1.44 UMO exploitant.</small>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>2. Unités d'Investissement (Structure)</h2>
+            
+            <div class="investment-selector">
+                <div class="inv-details">
+                    <h4>Extension Bâtiment Ovin</h4>
+                    <p>1 lot = +50 places | DAP: +1 800€, Intérêts: +360€, Capital: +1 675€</p>
+                </div>
+                <select id="qty-bat" class="select-qty">
+                    <option value="0">0 lot (250 pl.)</option>
+                    <option value="1">1 lot (300 pl.)</option>
+                    <option value="2">2 lots (350 pl.)</option>
+                    <option value="3">3 lots (400 pl.)</option>
+                    <option value="4">4 lots (450 pl.)</option>
+                    <option value="5">5 lots (500 pl.)</option>
+                </select>
+            </div>
+
+            <div class="investment-selector">
+                <div class="inv-details">
+                    <h4>Reprise de Foncier (Méteil)</h4>
+                    <p>1 lot = +10 ha | Fermage + charges (semences, méca, carb) : +5 200€</p>
+                </div>
+                <select id="qty-foncier" class="select-qty">
+                    <option value="0">0 lot (75 ha)</option>
+                    <option value="1">1 lot (85 ha)</option>
+                    <option value="2">2 lots (95 ha)</option>
+                    <option value="3">3 lots (105 ha)</option>
+                </select>
+            </div>
+
+            <div class="investment-selector">
+                <div class="inv-details">
+                    <h4>Embauche Salarié (Base : 1 600 h/an/UMO)</h4>
+                    <p>1 lot = +0.25 UMO (+400 h) | Coût complet chargé : +5 700 € / lot</p>
+                </div>
+                <select id="qty-salarie" class="select-qty">
+                    <option value="0">0 lot (0 h)</option>
+                    <option value="1">1 lot (+0.25 UMO / 400 h)</option>
+                    <option value="2">2 lots (+0.50 UMO / 800 h)</option>
+                    <option value="3">3 lots (+0.75 UMO / 1200 h)</option>
+                    <option value="4">4 lots (+1.00 UMO / 1600 h)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="panel full-width">
+            <h2>3. Impact sur les Seuils de Production</h2>
+            
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span>Logement Bâtiment Ovin (<span id="lbl-max-bat">250</span> places max)</span>
+                    <span id="pct-bat">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="bar-bat" class="progress-bar-fill"></div>
+                </div>
+                <div id="feed-bat" class="feedback-box"></div>
+            </div>
+
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span>Autonomie Concentrés Ferme (<span id="lbl-max-alim">50.1</span> t dispo)</span>
+                    <span id="pct-alim">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="bar-alim" class="progress-bar-fill"></div>
+                </div>
+                <div id="feed-alim" class="feedback-box"></div>
+            </div>
+
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span>Charge de travail globale (<span id="lbl-total-heures">0</span> h disponibles)</span>
+                    <span id="pct-travail">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="bar-travail" class="progress-bar-fill"></div>
+                </div>
+                <div id="feed-travail" class="feedback-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pedagogy-zone">
+        <h3>4. Synthèse des Ajustements & Chiffrage indicatif Couprod</h3>
+        <div id="global-diagnostic">Calcul en cours...</div>
+        <div class="impact-list" id="impact-tags"></div>
+    </div>
+</div>
+
+<script>
+    // Éléments d'entrée
+    const inputBrebis = document.getElementById('brebis');
+    const inputUmo = document.getElementById('umo');
+    const qtyBat = document.getElementById('qty-bat');
+    const qtyFoncier = document.getElementById('qty-foncier');
+    const qtySalarie = document.getElementById('qty-salarie');
+    
+    // Éléments de libellés max
+    const valBrebis = document.getElementById('brebis-val');
+    const valUmo = document.getElementById('umo-val');
+    const lblMaxBat = document.getElementById('lbl-max-bat');
+    const lblMaxAlim = document.getElementById('lbl-max-alim');
+    const lblTotalHeures = document.getElementById('lbl-total-heures');
+
+    // Éléments barres
+    const pctBat = document.getElementById('pct-bat');
+    const barBat = document.getElementById('bar-bat');
+    const feedBat = document.getElementById('feed-bat');
+
+    const pctAlim = document.getElementById('pct-alim');
+    const barAlim = document.getElementById('bar-alim');
+    const feedAlim = document.getElementById('feed-alim');
+
+    const pctTravail = document.getElementById('pct-travail');
+    const barTravailFill = document.getElementById('bar-travail');
+    const feedTravail = document.getElementById('feed-travail');
+
+    const globalDiag = document.getElementById('global-diagnostic');
+    const impactTags = document.getElementById('impact-tags');
+
+    // Constante pour l'aliment BIO (Prix moyen constaté sur les marchés spécialisés)
+    const PRIX_TONNE_CONCENTRE_BIO = 580; 
+
+    function recalculer() {
+        const brebis = parseInt(inputBrebis.value);
+        const umoExploit = parseFloat(inputUmo.value);
+        
+        const nbLotsBat = parseInt(qtyBat.value);
+        const nbLotsFoncier = parseInt(qtyFoncier.value);
+        const nbLotsSalarie = parseInt(qtySalarie.value);
+
+        // Application des paliers d'investissements
+        const maxBat = 250 + (nbLotsBat * 50);
+        const maxAlimTonnes = 50.1 + (nbLotsFoncier * 25); 
+        
+        // Distinction des heures de travail
+        const heuresExploit = umoExploit * 2200; 
+        const heuresSalarie = nbLotsSalarie * 400; 
+        const totalHeuresDispo = heuresExploit + heuresSalarie;
+        const totalUmoAffiche = umoExploit + (nbLotsSalarie * 0.25);
+
+        // Affichage des compteurs
+        valBrebis.textContent = brebis;
+        valUmo.textContent = umoExploit.toFixed(2);
+        lblMaxBat.textContent = maxBat;
+        lblMaxAlim.textContent = maxAlimTonnes.toFixed(1);
+        lblTotalHeures.textContent = Math.round(totalHeuresDispo) + " h (" + totalUmoAffiche.toFixed(2) + " UMO total)";
+
+        // 1. CALCUL SEUIL BATIMENT
+        const saturationBat = (brebis / maxBat) * 100;
+        pctBat.textContent = saturationBat.toFixed(0) + "%";
+        barBat.style.width = Math.min(saturationBat, 100) + "%";
+
+        if (saturationBat > 100) {
+            barBat.style.backgroundColor = 'rgb(231,76,60)';
+            feedBat.className = "feedback-box status-crit";
+            feedBat.textContent = `CRITIQUE : Il manque ${brebis - maxBat} places en bergerie. Ajoutez des lots de bâtiment !`;
+        } else if (saturationBat < 65) {
+            barBat.style.backgroundColor = 'rgb(213,137,37)';
+            feedBat.className = "feedback-box status-warn";
+            feedBat.textContent = "SOUS-OPTIMISÉ : Bergerie trop vide. Les charges fixes (DAP) vont peser lourd par animal.";
+        } else {
+            barBat.style.backgroundColor = 'rgb(179,206,53)';
+            feedBat.className = "feedback-box status-ok";
+            feedBat.textContent = "COHÉRENT : La capacité de la bergerie est idéalement optimisée.";
+        }
+
+        // 2. CALCUL SEUIL ALIMENTAIRE (AVEC EVALUATION DU DEFICIT)
+        const besoinTroupeauTonnes = (brebis * 0.160) + ((brebis * 0.95) * 0.050);
+        const saturationAlim = (besoinTroupeauTonnes / maxAlimTonnes) * 100;
+        pctAlim.textContent = saturationAlim.toFixed(0) + "%";
+        barAlim.style.width = Math.min(saturationAlim, 100) + "%";
+
+        let tManquantes = 0;
+        let coutAchatAlimentBio = 0;
+
+        if (saturationAlim > 100) {
+            tManquantes = besoinTroupeauTonnes - maxAlimTonnes;
+            coutAchatAlimentBio = tManquantes * PRIX_TONNE_CONCENTRE_BIO;
+            barAlim.style.backgroundColor = 'rgb(213,137,37)'; // Alerte orange car l'achat extérieur compense le blocage physique
+            feedAlim.className = "feedback-box status-warn";
+            feedAlim.textContent = `DÉFICIT ALIMENTAIRE : Manque ${tManquantes.toFixed(1)} t. de concentrés. Compensation automatique par achat extérieur Bio (Facture calculée ci-dessous).`;
+        } else if (saturationAlim < 75) {
+            barAlim.style.backgroundColor = 'rgb(98,180,234)';
+            feedAlim.className = "feedback-box status-info";
+            feedAlim.textContent = "EXCÉDENT MAJEUR : Terres larges. Vous pouvez valoriser ce grain sur l'atelier Volailles pour économiser l'achat extérieur !";
+        } else {
+            barAlim.style.backgroundColor = 'rgb(179,206,53)';
+            feedAlim.className = "feedback-box status-ok";
+            feedAlim.textContent = "ÉQUILIBRE : L'assolement en céréales/méteil couvre parfaitement le cheptel choisi.";
+        }
+
+        // 3. CALCUL SEUIL TRAVAIL
+        const heuresNecessaires = brebis * 8; 
+        const saturationTravail = (heuresNecessaires / totalHeuresDispo) * 100;
+        pctTravail.textContent = saturationTravail.toFixed(0) + "%";
+        barTravailFill.style.width = Math.min(saturationTravail, 100) + "%";
+
+        if (saturationTravail > 105) {
+            barTravailFill.style.backgroundColor = 'rgb(231,76,60)';
+            feedTravail.className = "feedback-box status-crit";
+            feedTravail.textContent = `SURCHARGE HUMAINE : Manque de temps (${Math.round(heuresNecessaires - totalHeuresDispo)} h manquantes). Réduisez le troupeau ou embauchez du salariat.`;
+        } else if (saturationTravail < 75) {
+            barTravailFill.style.backgroundColor = 'rgb(213,137,37)';
+            feedTravail.className = "feedback-box status-warn";
+            feedTravail.textContent = "SOUS-EFFICIENCE : Le volume d'heures disponible est trop large par rapport aux besoins réels d'astreinte.";
+        } else {
+            barTravailFill.style.backgroundColor = 'rgb(179,206,53)';
+            feedTravail.className = "feedback-box status-ok";
+            feedTravail.textContent = "COHÉRENCE RYTHME : Le ratio d'astreinte et de surveillance est maîtrisé.";
+        }
+
+        // DIAGNOSTIC GLOBAL ET BADGES POUR EXPORT COUPROD
+        let diag = "";
+        let badges = [];
+
+        // Le bâtiment et le travail restent des barrières physiques bloquantes (>100% ou >105%)
+        if (saturationBat > 100 || saturationTravail > 105) {
+            diag = "❌ <strong>Dimensionnement incorrect :</strong> Le système bloque face à une barrière physique (bâtiment) ou humaine (travail). Ajustez les curseurs ou ajoutez des investissements.";
+        } else {
+            diag = "✅ <strong>Cadre technique validé !</strong> Vos choix de flux et de structure sont cohérents pour l'exploitation support. Reportez maintenant ces indicateurs dans votre étude sous <strong>Couprod</strong> :";
+            
+            badges.push(`<span class="impact-badge" style="background:var(--blue-farm); color:white;">👉 Effectif à saisir : ${brebis} Brebis | Main-d'œuvre : ${umoExploit.toFixed(2)} UMO Expl. (${Math.round(heuresExploit)} h)</span>`);
+            
+            // Badge Alimentation (Dynamique si déficit)
+            if (coutAchatAlimentBio > 0) {
+                badges.push(`<span class="impact-badge" style="background:var(--red-alert); color:white;">🌾 ALIMENTATION (Achat Extérieur BIO) | Charges (EBE) : Ajouter +${Math.round(coutAchatAlimentBio)} € en achats d'aliments (Volume : ${tManquantes.toFixed(1)} t. à ${PRIX_TONNE_CONCENTRE_BIO} €/t)</span>`);
+            }
+
+            if (nbLotsBat > 0) {
+                const totalDap = nbLotsBat * 1800;
+                const totalInt = nbLotsBat * 360;
+                const totalCap = nbLotsBat * 1675;
+                badges.push(`<span class="impact-badge" style="background:var(--orange-farm); color:white;">🏢 BATIMENT (${nbLotsBat} lot(s)) | Charges (EBE) : DAP +${totalDap} € , Intérêts +${totalInt} € | Trésorerie : Sortie Capital +${totalCap} €/an</span>`);
+            }
+            if (nbLotsFoncier > 0) {
+                const ha = nbLotsFoncier * 10;
+                const fermage = nbLotsFoncier * 1300;
+                const semences = nbLotsFoncier * 150 * 10;
+                const meca = nbLotsFoncier * 170 * 10;
+                const carb = nbLotsFoncier * 70 * 10;
+                const totalFoncier = fermage + semences + meca + carb;
+                badges.push(`<span class="impact-badge" style="background:var(--orange-farm); color:white;">🌱 FONCIER (+${ha} ha) | Charges globales : +${totalFoncier} €/an (dont Fermages: ${fermage}€, Semences: ${semences}€, Méca: ${meca}€, Carburant: ${carb}€)</span>`);
+            }
+            if (nbLotsSalarie > 0) {
+                const totalSal = nbLotsSalarie * 5700;
+                badges.push(`<span class="impact-badge" style="background:var(--orange-farm); color:white;">💼 SALARIAT (+${(nbLotsSalarie * 0.25).toFixed(2)} UMO / +${nbLotsSalarie * 400} h) | Charges de personnel : +${totalSal} €/an (Base SMIC complet chargé)</span>`);
+            }
+        }
+
+        globalDiag.innerHTML = diag;
+        impactTags.innerHTML = badges.join(' ');
+    }
+
+    // Abonnements aux modifications
+    inputBrebis.addEventListener('input', recalculer);
+    inputUmo.addEventListener('input', recalculer);
+    qtyBat.addEventListener('change', recalculer);
+    qtyFoncier.addEventListener('change', recalculer);
+    qtySalarie.addEventListener('change', recalculer);
+
+    // Initialisation
+    recalculer();
+</script>
+
+</body>
+</html>
