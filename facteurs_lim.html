@@ -231,11 +231,10 @@
     <h1>Simulateur Évolué : Cohérence Moyens & Paramètres Zootechniques</h1>
     
     <div class="intro">
-        <strong>Cas d'étude - Audit Exploitation :</strong> L'exploitation dispose d'une base de 49,5 ha de SFP, 20,1 ha de méteil et 250 places de bergerie. Ajustez finement le foncier hectare par hectare (jusqu'à +25 ha) et observez les charges d'investissements induites.
+        <strong>Cas d'étude - Audit Exploitation :</strong> L'exploitation dispose d'une base de 49,5 ha de SFP, 20,1 ha de méteil et 250 places de bergerie. Ajustez finement le foncier hectare par hectare (jusqu'à +30 ha pour la SFP) et observez les charges d'investissements induites.
     </div>
 
     <div class="grid-layout">
-        <!-- PANNEAU DES FLUX ET OBJECTIFS -->
         <div class="panel">
             <h2>1. Dimensionnement de l'Atelier (Moyens & MO)</h2>
             
@@ -277,8 +276,7 @@
                     <p>Granularité : 1 lot = +1 ha (+520 € de charges/ha)</p>
                 </div>
                 <select id="qty-prairie" class="select-qty">
-                    <!-- Généré dynamiquement par JS de 0 à 30 lots -->
-                </select>
+                    </select>
             </div>
 
             <div class="investment-selector">
@@ -287,8 +285,7 @@
                     <p>Granularité : 1 lot = +1 ha (+520 € de charges/ha)</p>
                 </div>
                 <select id="qty-meteil" class="select-qty">
-                    <!-- Généré dynamiquement par JS de 0 à 25 lots -->
-                </select>
+                    </select>
             </div>
 
             <div class="investment-selector">
@@ -306,7 +303,6 @@
             </div>
         </div>
 
-        <!-- PANNEAU TECHNIQUE ZOOTECHNIQUE -->
         <div class="panel">
             <h2>3. Curseurs Techniques & Biologiques (Atelier)</h2>
             
@@ -341,7 +337,6 @@
             </div>
         </div>
 
-        <!-- SEUILS DE PRODUCTION -->
         <div class="panel full-width">
             <h2>4. Diagnostic en Temps Réel des Équilibres de Cohérence</h2>
             
@@ -391,7 +386,6 @@
         </div>
     </div>
 
-    <!-- SYNTHESE ET COUPROD -->
     <div class="pedagogy-zone">
         <h3>5. Données de Production Sortantes & Coûts d'Investissement Restructurés</h3>
         <div id="global-diagnostic" style="font-weight:bold; margin-bottom:15px;">Calcul en cours...</div>
@@ -400,19 +394,22 @@
 </div>
 
 <script>
-    // Génération dynamique des listes déroulantes de 0 à 30 lots (hectare par hectare)
     const selectPrairie = document.getElementById('qty-prairie');
     const selectMeteil = document.getElementById('qty-meteil');
     
+    // Génération SFP augmentée à 30 lots (49.5 ha à 79.5 ha)
     for (let i = 0; i <= 30; i++) {
-        let haP = (50 + i).toFixed(1);
+        let haP = (49.5 + i).toFixed(1);
         let optionP = document.createElement('option');
         optionP.value = i;
         optionP.textContent = `${i} lot${i > 1 ? 's' : ''} (${haP} ha)`;
         if(i === 0) optionP.selected = true;
         selectPrairie.appendChild(optionP);
+    }
 
-        let haM = (20 + i).toFixed(1);
+    // Génération Méteil de 0 à 25 lots (20.1 ha à 45.1 ha)
+    for (let i = 0; i <= 25; i++) {
+        let haM = (20.1 + i).toFixed(1);
         let optionM = document.createElement('option');
         optionM.value = i;
         optionM.textContent = `${i} lot${i > 1 ? 's' : ''} (${haM} ha)`;
@@ -473,8 +470,8 @@
         const renouv = parseInt(inputRenouvellement.value) / 100;
         
         const nbLotsBat = parseInt(qtyBat.value);
-        const nbLotsPrairie = parseInt(qtyPrairie.value); // 1 lot = 1 ha
-        const nbLotsMeteil = parseInt(qtyMeteil.value);   // 1 lot = 1 ha
+        const nbLotsPrairie = parseInt(qtyPrairie.value); 
+        const nbLotsMeteil = parseInt(qtyMeteil.value);   
         const nbLotsSalarie = parseInt(qtySalarie.value);
 
         valBrebis.textContent = brebis;
@@ -498,7 +495,7 @@
         const besoinTroupeauTonnes = brebis * besoinParBrebisTonnes;
         const besoinFourrageTonnes = (brebis * 0.65) + (agnellesGardees * 0.25);
 
-        // NOUVEAUX CALCULS DE SURFACES ET CAPACITÉS
+        // Intègre dynamiquement jusqu'à 30 lots de SFP
         const maxBat = 250 + (nbLotsBat * 50);
         const surfacePrairies = 49.5 + (nbLotsPrairie * 1);
         const productionFourrageDispo = surfacePrairies * 4.2;
@@ -506,7 +503,6 @@
         const surfaceMeteil = 20.1 + (nbLotsMeteil * 1);
         const maxAlimTonnes = (surfaceMeteil * 25.15) / 10; 
         
-        // MO Corrigée : 1 lot salarié = +0.25 UMO et +400 h
         const totalHeuresDispo = (umoExploit * 2200) + (nbLotsSalarie * 400);
 
         lblMaxBat.textContent = maxBat;
@@ -514,18 +510,14 @@
         lblMaxAlim.textContent = maxAlimTonnes.toFixed(1);
         lblTotalHeures.textContent = Math.round(totalHeuresDispo) + " h";
 
-        // CALCULS DES COÛTS DE STRUCTURE ADDITIONNELS (LES LOTS)
         const batDAP = nbLotsBat * 1800;
         const batInt = nbLotsBat * 360;
         const batCap = nbLotsBat * 1675;
 
-        // Charges foncières totales (SFP + Méteil) à 520€ l'hectare supplémentaire
         const chargesFoncierSup = (nbLotsPrairie + nbLotsMeteil) * 520;
-
-        // Coût du salariat à 5700€ le lot de 400h
         const coutSalariatSup = nbLotsSalarie * 5700;
 
-        // BÂTIMENT (Graphique)
+        // BÂTIMENT
         const saturationBat = (brebis / maxBat) * 100;
         pctBat.textContent = saturationBat.toFixed(0) + "%";
         barBat.style.width = Math.min(saturationBat, 100) + "%";
@@ -539,7 +531,7 @@
             feedBat.textContent = "COHÉRENT : Capacité de logement suffisante.";
         }
 
-        // PRAIRIES (Graphique)
+        // PRAIRIES
         const saturationHerbe = (besoinFourrageTonnes / productionFourrageDispo) * 100;
         pctHerbe.textContent = saturationHerbe.toFixed(0) + "%";
         barHerbe.style.width = Math.min(saturationHerbe, 100) + "%";
@@ -557,7 +549,7 @@
             feedHerbe.textContent = `AUTOSUFFISANCE HERBE : Sécurité fourragère assurée (${surfacePrairies.toFixed(1)} ha).`;
         }
 
-        // MÉTEIL (Graphique)
+        // MÉTEIL
         const saturationAlim = (besoinTroupeauTonnes / maxAlimTonnes) * 100;
         pctAlim.textContent = saturationAlim.toFixed(0) + "%";
         barAlim.style.width = Math.min(saturationAlim, 100) + "%";
@@ -568,35 +560,34 @@
             coutAchatAlimentBio = tManquantes * PRIX_TONNE_CONCENTRE_BIO;
             barAlim.style.backgroundColor = 'rgb(213,137,37)';
             feedAlim.className = "feedback-box status-warn";
-            feedAlim.textContent = `DÉFICIT MÉTEIL : Besoin de ${besoinTroupeauTonnes.toFixed(1)} t. Manque ${tManquantes.toFixed(1)} t à acheter.`;
+            feedAlim.textContent = `DÉFICIT MÉTEIL : Besoin de ${besoinTroupeauTonnes.toFixed(1)} t. Manque ${tManquantes.toFixed(1)} t.`;
         } else {
             barAlim.style.backgroundColor = 'rgb(179,206,53)';
             feedAlim.className = "feedback-box status-ok";
             feedAlim.textContent = `AUTONOMIE MÉTEIL : Récolte interne de ${maxAlimTonnes.toFixed(1)} t suffisante.`;
         }
 
-        // MO (8.5h / brebis)
+        // MO
         const heuresNecessaires = brebis * 8.5;
         const saturationTravail = (heuresNecessaires / totalHeuresDispo) * 100;
-        pctTravail.textContent = saturationTravail.toFixed(0) + "%";
+        pctTail = pctTravail.textContent = saturationTravail.toFixed(0) + "%";
         barTravailFill.style.width = Math.min(saturationTravail, 100) + "%";
         if (saturationTravail > 105) {
             barTravailFill.style.backgroundColor = 'rgb(231,76,60)';
             feedTravail.className = "feedback-box status-crit";
-            feedTravail.textContent = "SURCHARGE : Temps de travail insuffisant pour assurer le suivi.";
+            feedTravail.textContent = "SURCHARGE : Temps de travail insuffisant.";
         } else {
             barTravailFill.style.backgroundColor = 'rgb(179,206,53)';
             feedTravail.className = "feedback-box status-ok";
             feedTravail.textContent = "CHARGE DE TRAVAIL MAÎTRISÉE : Équilibre respecté.";
         }
 
-        // CALCUL IMPACT VIANDE
         const kgCarcasseAgneaux = agneauxVendus * 18; 
         const kgCarcasseReformes = brebisReforme * 28; 
         const totalViandeVendue = kgCarcasseAgneaux + kgCarcasseReformes;
 
         if (saturationBat > 100 || saturationTravail > 105) {
-            globalDiag.innerHTML = "❌ Rupture de cohérence physique. Réajustez vos investissements (bâtiment ou salarié d'appui) pour libérer les blocages.";
+            globalDiag.innerHTML = "❌ Rupture de cohérence physique. Réajustez vos investissements structurels.";
             impactTags.innerHTML = "";
         } else {
             globalDiag.innerHTML = `📊 Diagnostic Structurel & Économique Validé (${brebis} brebis)`;
@@ -610,7 +601,6 @@
                 • Assolement : SFP = ${surfacePrairies.toFixed(1)} ha | Méteil = ${surfaceMeteil.toFixed(1)} ha
             </div>`);
 
-            // RESTAURATION COMPLÈTE DE LA SYNTHÈSE DES COÛTS D'INVESTISSEMENT
             let aAjouteFinancier = (batDAP > 0 || chargesFoncierSup > 0 || coutSalariatSup > 0);
             if (aAjouteFinancier) {
                 let detailFinancier = "";
@@ -627,18 +617,15 @@
                 htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--orange-farm);">
                     <strong>📉 Coûts de Structure des Nouveaux Lots :</strong><br>
                     ${detailFinancier}
-                    <span style="font-size:0.8rem; color:#64748b;">(Note : Ces montants s'ajoutent aux charges fixes structurelles de l'exploitation de base).</span>
                 </div>`);
             } else {
                 htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--green-farm);">
                     <strong>📉 Coûts de Structure Initiaux :</strong><br>
-                    • Aucun lot d'investissement ou foncier supplémentaire acheté.<br>
                     • Structure sur l'assiette de base (zéro surcoût).
                 </div>`);
             }
 
-            // AJUSTEMENT DES COMPTES COMPLÉMENTAIRES D'ACHATS D'ALIMENTS OU DE FOIN
-            if (coutAchatAlimentBio > 0 || coutAchatFoin > 0) {
+            if (coutAchatAlimentBio > 0 || foinManquant > 0) {
                 let detailsAchats = "";
                 if (coutAchatAlimentBio > 0) detailsAchats += `• Grains/Concentrés : +${Math.round(coutAchatAlimentBio).toLocaleString()} € (${tManquantes.toFixed(1)} t)<br>`;
                 if (coutAchatFoin > 0) detailsAchats += `• Foin extérieur : +${Math.round(coutAchatFoin).toLocaleString()} € (${foinManquant.toFixed(1)} t MS)<br>`;
@@ -651,8 +638,7 @@
             } else {
                 htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--green-farm);">
                     <strong>☀️ Autonomie Système Complète :</strong><br>
-                    • Coût d'achat de fourrages & grains : <strong>0 €</strong>.<br>
-                    • La configuration foncière couvre à 100% les rations de l'auge.
+                    • Coût d'achat de fourrages & grains : <strong>0 €</strong>.
                 </div>`);
             }
 
