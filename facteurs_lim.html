@@ -277,7 +277,7 @@
                     <p>Granularité : 1 lot = +1 ha (+520 € de charges/ha)</p>
                 </div>
                 <select id="qty-prairie" class="select-qty">
-                    <!-- Généré dynamiquement par JS de 0 à 25 lots -->
+                    <!-- Généré dynamiquement par JS de 0 à 30 lots -->
                 </select>
             </div>
 
@@ -400,19 +400,19 @@
 </div>
 
 <script>
-    // Génération dynamique des listes déroulantes de 0 à 25 lots (hectare par hectare)
+    // Génération dynamique des listes déroulantes de 0 à 30 lots (hectare par hectare)
     const selectPrairie = document.getElementById('qty-prairie');
     const selectMeteil = document.getElementById('qty-meteil');
     
-    for (let i = 0; i <= 25; i++) {
-        let haP = (49.5 + i).toFixed(1);
+    for (let i = 0; i <= 30; i++) {
+        let haP = (50 + i).toFixed(1);
         let optionP = document.createElement('option');
         optionP.value = i;
         optionP.textContent = `${i} lot${i > 1 ? 's' : ''} (${haP} ha)`;
         if(i === 0) optionP.selected = true;
         selectPrairie.appendChild(optionP);
 
-        let haM = (20.1 + i).toFixed(1);
+        let haM = (20 + i).toFixed(1);
         let optionM = document.createElement('option');
         optionM.value = i;
         optionM.textContent = `${i} lot${i > 1 ? 's' : ''} (${haM} ha)`;
