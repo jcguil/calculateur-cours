@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulateur de Cohérence Modulaire - Exploitation Support</title>
+    <title>Simulateur de Cohérence Modulaire & Zootechnique</title>
     <style>
         :root {
             --green-farm: rgb(179, 206, 53);
@@ -24,7 +24,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -37,6 +37,7 @@
             border-bottom: 3px solid var(--blue-farm);
             padding-bottom: 10px;
             margin-top: 0;
+            font-size: 1.6rem;
         }
 
         .intro {
@@ -48,7 +49,7 @@
             font-size: 0.95rem;
         }
 
-        .grid-3 {
+        .grid-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 25px;
@@ -60,7 +61,7 @@
         }
 
         @media (max-width: 900px) {
-            .grid-3 { grid-template-columns: 1fr; }
+            .grid-layout { grid-template-columns: 1fr; }
             .full-width { grid-column: span 1; }
         }
 
@@ -79,10 +80,11 @@
             color: #34495e;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 8px;
+            margin-bottom: 15px;
         }
 
         .control-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         label {
@@ -109,12 +111,11 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
-            min-width: 55px;
+            min-width: 75px;
             text-align: center;
             font-size: 0.9rem;
         }
 
-        /* Investissements modulaires style */
         .investment-selector {
             display: flex;
             align-items: center;
@@ -146,11 +147,6 @@
             color: var(--dark-gray);
             background-color: #f8fafc;
             cursor: pointer;
-        }
-
-        .select-qty:focus {
-            border-color: var(--blue-farm);
-            outline: none;
         }
 
         .indicator {
@@ -191,7 +187,6 @@
         .status-ok { background-color: rgba(179, 206, 53, 0.2); color: #4d5a11; }
         .status-warn { background-color: rgba(213, 137, 37, 0.2); color: #784a10; }
         .status-crit { background-color: rgba(231, 76, 60, 0.2); color: #7f1d1d; }
-        .status-info { background-color: rgba(98, 180, 234, 0.2); color: #1a4663; }
 
         .pedagogy-zone {
             background: #f8fafc;
@@ -207,106 +202,158 @@
 
         .impact-list {
             margin-top: 12px;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            flex-wrap: wrap;
         }
+
+        @media (max-width: 750px) {
+            .impact-list { grid-template-columns: 1fr; }
+        }
+
         .impact-badge {
-            background: #e2e8f0;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: block;
-            width: 100%;
+            background: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
             box-sizing: border-box;
-            margin-bottom: 5px;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid var(--blue-farm);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Simulateur de Cohérence Modulaire : Ajustement des Moyens</h1>
+    <h1>Simulateur Évolué : Cohérence Moyens & Paramètres Zootechniques</h1>
     
     <div class="intro">
-        <strong>Approche Par Lots d'Investissement :</strong> Si vos objectifs techniques font saturer les bâtiments, les terres ou la main-d'œuvre, ajustez la structure. Les exploitants cotisent sur une base de <strong>2 200 h/an</strong> tandis que les salariés sont comptés sur une base réglementaire de <strong>1 600 h/an</strong>.
+        <strong>Cas d'étude - Audit Exploitation :</strong> La situation intègre l'assolement initial (20,08 ha de méteil, 32,89 ha de PT et 16,58 ha de PP). Vous disposez désormais de 4 lots d'investissement en bâtiment et foncier pour tester les scénarios de croissance extrêmes du troupeau.
     </div>
 
-    <div class="grid-3">
+    <div class="grid-layout">
+        <!-- PANNEAU DES FLUX ET OBJECTIFS -->
         <div class="panel">
-            <h2>1. Objectifs Techniques & Humains (Flux)</h2>
+            <h2>1. Dimensionnement de l'Atelier (Moyens & MO)</h2>
             
             <div class="control-group">
-                <label for="brebis">Effectif global de Brebis (Normal initial : 230)</label>
+                <label for="brebis">Effectif de Brebis Présentes</label>
                 <div class="slider-container">
-                    <input type="range" id="brebis" min="130" max="450" step="5" value="223">
-                    <span id="brebis-val" class="badge-value">223</span>
+                    <input type="range" id="brebis" min="150" max="500" step="5" value="225">
+                    <span id="brebis-val" class="badge-value">225</span>
                 </div>
             </div>
 
             <div class="control-group">
-                <label for="umo">Main-d'œuvre Exploitants (Base : 2 200 h/an/UMO)</label>
+                <label for="umo">Main-d'œuvre Exploitants (Base : 2200 h/an/UMO)</label>
                 <div class="slider-container">
-                    <input type="range" id="umo" min="0.80" max="2.00" step="0.05" value="1.44">
-                    <span id="umo-val" class="badge-value">1.44</span>
+                    <input type="range" id="umo" min="0.50" max="2.50" step="0.05" value="1.00">
+                    <span id="umo-val" class="badge-value">1.00</span>
                 </div>
-                <small style="color:#7f8c8d;">Situation initiale de l'exploitation support : 1.44 UMO exploitant.</small>
             </div>
-        </div>
 
-        <div class="panel">
-            <h2>2. Unités d'Investissement (Structure)</h2>
-            
+            <h2 style="margin-top:25px;">2. Unités d'Investissement & Arbitrages Fonciers</h2>
             <div class="investment-selector">
                 <div class="inv-details">
-                    <h4>Extension Bâtiment Ovin</h4>
-                    <p>1 lot = +50 places | DAP: +1 800€, Intérêts: +360€, Capital: +1 675€</p>
+                    <h4>Extension Bergerie</h4>
+                    <p>1 lot = +50 places (Base : 250 pl.)</p>
                 </div>
                 <select id="qty-bat" class="select-qty">
-                    <option value="0">0 lot (250 pl.)</option>
+                    <option value="0" selected>0 lot (250 pl.)</option>
                     <option value="1">1 lot (300 pl.)</option>
                     <option value="2">2 lots (350 pl.)</option>
                     <option value="3">3 lots (400 pl.)</option>
                     <option value="4">4 lots (450 pl.)</option>
-                    <option value="5">5 lots (500 pl.)</option>
                 </select>
             </div>
 
             <div class="investment-selector">
                 <div class="inv-details">
-                    <h4>Reprise de Foncier (Méteil)</h4>
-                    <p>1 lot = +10 ha | Fermage + charges (semences, méca, carb) : +5 200€</p>
+                    <h4>Foncier SFP (Prairies)</h4>
+                    <p>1 lot = +5 ha de SFP (Base : 49.5 ha)</p>
                 </div>
-                <select id="qty-foncier" class="select-qty">
-                    <option value="0">0 lot (75 ha)</option>
-                    <option value="1">1 lot (85 ha)</option>
-                    <option value="2">2 lots (95 ha)</option>
-                    <option value="3">3 lots (105 ha)</option>
+                <select id="qty-prairie" class="select-qty">
+                    <option value="0" selected>0 lot (49.5 ha)</option>
+                    <option value="1">1 lot (54.5 ha)</option>
+                    <option value="2">2 lots (59.5 ha)</option>
+                    <option value="3">3 lots (64.5 ha)</option>
+                    <option value="4">4 lots (69.5 ha)</option>
                 </select>
             </div>
 
             <div class="investment-selector">
                 <div class="inv-details">
-                    <h4>Embauche Salarié (Base : 1 600 h/an/UMO)</h4>
-                    <p>1 lot = +0.25 UMO (+400 h) | Coût complet chargé : +5 700 € / lot</p>
+                    <h4>Foncier Cultures (Méteil)</h4>
+                    <p>1 lot = +5 ha de Méteil (Base : 20.1 ha)</p>
+                </div>
+                <select id="qty-meteil" class="select-qty">
+                    <option value="0" selected>0 lot (20.1 ha)</option>
+                    <option value="1">1 lot (25.1 ha)</option>
+                    <option value="2">2 lots (30.1 ha)</option>
+                    <option value="3">3 lots (35.1 ha)</option>
+                    <option value="4">4 lots (40.1 ha)</option>
+                </select>
+            </div>
+
+            <div class="investment-selector">
+                <div class="inv-details">
+                    <h4>Salariat d'Appui (Saisonnier / Agnelage)</h4>
+                    <p>1 lot = +0.10 UMO (+160 h)</p>
                 </div>
                 <select id="qty-salarie" class="select-qty">
-                    <option value="0">0 lot (0 h)</option>
-                    <option value="1">1 lot (+0.25 UMO / 400 h)</option>
-                    <option value="2">2 lots (+0.50 UMO / 800 h)</option>
-                    <option value="3">3 lots (+0.75 UMO / 1200 h)</option>
-                    <option value="4">4 lots (+1.00 UMO / 1600 h)</option>
+                    <option value="0" selected>0 lot</option>
+                    <option value="1">1 lot</option>
+                    <option value="2">2 lots</option>
+                    <option value="3">3 lots</option>
+                    <option value="4">4 lots</option>
                 </select>
             </div>
         </div>
 
+        <!-- PANNEAU TECHNIQUE ZOOTECHNIQUE -->
+        <div class="panel">
+            <h2>3. Curseurs Techniques & Biologiques (Atelier)</h2>
+            
+            <div class="control-group">
+                <label for="prolificite">Prolificité Réelle (Agneaux nés / brebis mise bas)</label>
+                <div class="slider-container">
+                    <input type="range" id="prolificite" min="1.00" max="2.00" step="0.05" value="1.10">
+                    <span id="prolificite-val" class="badge-value">1.10</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="mortalite">Taux de Pertes Agneaux (Naissance au Sevrage)</label>
+                <div class="slider-container">
+                    <input type="range" id="mortalite" min="5" max="30" step="1" value="21">
+                    <span id="mortalite-val" class="badge-value">21 %</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="renouvellement">Taux de Renouvellement des Brebis</label>
+                <div class="slider-container">
+                    <input type="range" id="renouvellement" min="15" max="35" step="1" value="24">
+                    <span id="renouvellement-val" class="badge-value">24 %</span>
+                </div>
+            </div>
+            
+            <div class="control-group" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <label style="margin-bottom:2px; color: #475569;">Indicateurs calculés en temps réel :</label>
+                <div>• Prod. numérique : <strong id="lbl-prod-num" style="color:var(--dark-gray);">0.87</strong> agneau sevré / brebis</div>
+                <div>• Agneaux sevrés réels : <strong id="lbl-total-sevres" style="color:var(--dark-gray);">195</strong> têtes</div>
+            </div>
+        </div>
+
+        <!-- SEUILS DE PRODUCTION -->
         <div class="panel full-width">
-            <h2>3. Impact sur les Seuils de Production</h2>
+            <h2>4. Diagnostic en Temps Réel des Équilibres de Cohérence</h2>
             
             <div class="indicator">
                 <div class="indicator-header">
-                    <span>Logement Bâtiment Ovin (<span id="lbl-max-bat">250</span> places max)</span>
+                    <span>Logement Bâtiment Ovin (<span id="lbl-max-bat">250</span> places disponibles)</span>
                     <span id="pct-bat">0%</span>
                 </div>
                 <div class="progress-bar-bg">
@@ -317,7 +364,18 @@
 
             <div class="indicator">
                 <div class="indicator-header">
-                    <span>Autonomie Concentrés Ferme (<span id="lbl-max-alim">50.1</span> t dispo)</span>
+                    <span>Autonomie Fourragère - Surface Prairies (<span id="lbl-max-herbe">49.5</span> ha exploités)</span>
+                    <span id="pct-herbe">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="bar-herbe" class="progress-bar-fill"></div>
+                </div>
+                <div id="feed-herbe" class="feedback-box"></div>
+            </div>
+
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span>Autonomie Concentrés - Récolte Méteil (<span id="lbl-max-alim">50.5</span> t dispo)</span>
                     <span id="pct-alim">0%</span>
                 </div>
                 <div class="progress-bar-bg">
@@ -328,7 +386,7 @@
 
             <div class="indicator">
                 <div class="indicator-header">
-                    <span>Charge de travail globale (<span id="lbl-total-heures">0</span> h disponibles)</span>
+                    <span>Disponibilité Main-d'œuvre (<span id="lbl-total-heures">0</span> h disponibles)</span>
                     <span id="pct-travail">0%</span>
                 </div>
                 <div class="progress-bar-bg">
@@ -339,32 +397,45 @@
         </div>
     </div>
 
+    <!-- SYNTHESE ET COUPROD -->
     <div class="pedagogy-zone">
-        <h3>4. Synthèse des Ajustements & Chiffrage indicatif Couprod</h3>
-        <div id="global-diagnostic">Calcul en cours...</div>
+        <h3>5. Données de Production Sortantes (Flux de Viande & Indicateurs Couprod)</h3>
+        <div id="global-diagnostic" style="font-weight:bold; margin-bottom:15px;">Calcul en cours...</div>
         <div class="impact-list" id="impact-tags"></div>
     </div>
 </div>
 
 <script>
-    // Éléments d'entrée
     const inputBrebis = document.getElementById('brebis');
     const inputUmo = document.getElementById('umo');
+    const inputProlificite = document.getElementById('prolificite');
+    const inputMortalite = document.getElementById('mortalite');
+    const inputRenouvellement = document.getElementById('renouvellement');
     const qtyBat = document.getElementById('qty-bat');
-    const qtyFoncier = document.getElementById('qty-foncier');
+    const qtyPrairie = document.getElementById('qty-prairie');
+    const qtyMeteil = document.getElementById('qty-meteil');
     const qtySalarie = document.getElementById('qty-salarie');
     
-    // Éléments de libellés max
     const valBrebis = document.getElementById('brebis-val');
     const valUmo = document.getElementById('umo-val');
+    const valProlificite = document.getElementById('prolificite-val');
+    const valMortalite = document.getElementById('mortalite-val');
+    const valRenouvellement = document.getElementById('renouvellement-val');
+    const lblProdNum = document.getElementById('lbl-prod-num');
+    const lblTotalSevres = document.getElementById('lbl-total-sevres');
+    
     const lblMaxBat = document.getElementById('lbl-max-bat');
+    const lblMaxHerbe = document.getElementById('lbl-max-herbe');
     const lblMaxAlim = document.getElementById('lbl-max-alim');
     const lblTotalHeures = document.getElementById('lbl-total-heures');
 
-    // Éléments barres
     const pctBat = document.getElementById('pct-bat');
     const barBat = document.getElementById('bar-bat');
     const feedBat = document.getElementById('feed-bat');
+
+    const pctHerbe = document.getElementById('pct-herbe');
+    const barHerbe = document.getElementById('bar-herbe');
+    const feedHerbe = document.getElementById('feed-herbe');
 
     const pctAlim = document.getElementById('pct-alim');
     const barAlim = document.getElementById('bar-alim');
@@ -377,148 +448,185 @@
     const globalDiag = document.getElementById('global-diagnostic');
     const impactTags = document.getElementById('impact-tags');
 
-    // Constante pour l'aliment BIO (Prix moyen constaté sur les marchés spécialisés)
-    const PRIX_TONNE_CONCENTRE_BIO = 580; 
+    const PRIX_TONNE_CONCENTRE_BIO = 580;
+    const PRIX_FOURRAGE_EXTERIEUR_BIO = 160; 
 
     function recalculer() {
         const brebis = parseInt(inputBrebis.value);
         const umoExploit = parseFloat(inputUmo.value);
+        const proli = parseFloat(inputProlificite.value);
+        const morte = parseInt(inputMortalite.value) / 100;
+        const renouv = parseInt(inputRenouvellement.value) / 100;
         
         const nbLotsBat = parseInt(qtyBat.value);
-        const nbLotsFoncier = parseInt(qtyFoncier.value);
+        const nbLotsPrairie = parseInt(qtyPrairie.value);
+        const nbLotsMeteil = parseInt(qtyMeteil.value);
         const nbLotsSalarie = parseInt(qtySalarie.value);
 
-        // Application des paliers d'investissements
-        const maxBat = 250 + (nbLotsBat * 50);
-        const maxAlimTonnes = 50.1 + (nbLotsFoncier * 25); 
-        
-        // Distinction des heures de travail
-        const heuresExploit = umoExploit * 2200; 
-        const heuresSalarie = nbLotsSalarie * 400; 
-        const totalHeuresDispo = heuresExploit + heuresSalarie;
-        const totalUmoAffiche = umoExploit + (nbLotsSalarie * 0.25);
-
-        // Affichage des compteurs
         valBrebis.textContent = brebis;
         valUmo.textContent = umoExploit.toFixed(2);
-        lblMaxBat.textContent = maxBat;
-        lblMaxAlim.textContent = maxAlimTonnes.toFixed(1);
-        lblTotalHeures.textContent = Math.round(totalHeuresDispo) + " h (" + totalUmoAffiche.toFixed(2) + " UMO total)";
+        valProlificite.textContent = proli.toFixed(2);
+        valMortalite.textContent = inputMortalite.value + " %";
+        valRenouvellement.textContent = inputRenouvellement.value + " %";
 
-        // 1. CALCUL SEUIL BATIMENT
+        const agneauxNes = Math.round(brebis * proli);
+        const agneauxSevres = Math.round(agneauxNes * (1 - morte));
+        const prodNum = (agneauxSevres / brebis);
+        
+        lblProdNum.textContent = prodNum.toFixed(2);
+        lblTotalSevres.textContent = agneauxSevres;
+
+        const agnellesGardees = Math.round(brebis * renouv);
+        const brebisReforme = agnellesGardees; 
+        const agneauxVendus = Math.max(0, agneauxSevres - agnellesGardees);
+
+        const besoinParBrebisTonnes = 0.11 + (prodNum * 0.016); 
+        const besoinTroupeauTonnes = brebis * besoinParBrebisTonnes;
+        const besoinFourrageTonnes = (brebis * 0.65) + (agnellesGardees * 0.25);
+
+        // Capacités max recalculées avec le 4ème lot
+        const maxBat = 250 + (nbLotsBat * 50);
+        const surfacePrairies = 49.47 + (nbLotsPrairie * 5);
+        const productionFourrageDispo = surfacePrairies * 4.2;
+        
+        const surfaceMeteil = 20.08 + (nbLotsMeteil * 5);
+        const maxAlimTonnes = (surfaceMeteil * 25.15) / 10; 
+        
+        const totalHeuresDispo = (umoExploit * 2200) + (nbLotsSalarie * 160);
+
+        lblMaxBat.textContent = maxBat;
+        lblMaxHerbe.textContent = surfacePrairies.toFixed(1);
+        lblMaxAlim.textContent = maxAlimTonnes.toFixed(1);
+        lblTotalHeures.textContent = Math.round(totalHeuresDispo) + " h";
+
+        // BÂTIMENT
         const saturationBat = (brebis / maxBat) * 100;
         pctBat.textContent = saturationBat.toFixed(0) + "%";
         barBat.style.width = Math.min(saturationBat, 100) + "%";
-
         if (saturationBat > 100) {
             barBat.style.backgroundColor = 'rgb(231,76,60)';
             feedBat.className = "feedback-box status-crit";
-            feedBat.textContent = `CRITIQUE : Il manque ${brebis - maxBat} places en bergerie. Ajoutez des lots de bâtiment !`;
-        } else if (saturationBat < 65) {
-            barBat.style.backgroundColor = 'rgb(213,137,37)';
-            feedBat.className = "feedback-box status-warn";
-            feedBat.textContent = "SOUS-OPTIMISÉ : Bergerie trop vide. Les charges fixes (DAP) vont peser lourd par animal.";
+            feedBat.textContent = `CRITIQUE : Surcharge bâtiment. Déficit de ${brebis - maxBat} places.`;
         } else {
             barBat.style.backgroundColor = 'rgb(179,206,53)';
             feedBat.className = "feedback-box status-ok";
-            feedBat.textContent = "COHÉRENT : La capacité de la bergerie est idéalement optimisée.";
+            feedBat.textContent = "COHÉRENT : Capacité de logement suffisante.";
         }
 
-        // 2. CALCUL SEUIL ALIMENTAIRE (AVEC EVALUATION DU DEFICIT)
-        const besoinTroupeauTonnes = (brebis * 0.160) + ((brebis * 0.95) * 0.050);
+        // PRAIRIES
+        const saturationHerbe = (besoinFourrageTonnes / productionFourrageDispo) * 100;
+        pctHerbe.textContent = saturationHerbe.toFixed(0) + "%";
+        barHerbe.style.width = Math.min(saturationHerbe, 100) + "%";
+        let foinManquant = 0;
+        let coutAchatFoin = 0;
+        if (saturationHerbe > 100) {
+            foinManquant = besoinFourrageTonnes - productionFourrageDispo;
+            coutAchatFoin = foinManquant * PRIX_FOURRAGE_EXTERIEUR_BIO;
+            barHerbe.style.backgroundColor = 'rgb(213,137,37)';
+            feedHerbe.className = "feedback-box status-warn";
+            feedHerbe.textContent = `DÉFICIT FOURRAGES : Manque ${foinManquant.toFixed(1)} t MS d'herbe/foin. Achat extérieur requis.`;
+        } else {
+            barHerbe.style.backgroundColor = 'rgb(179,206,53)';
+            feedHerbe.className = "feedback-box status-ok";
+            feedHerbe.textContent = `AUTOSUFFISANCE HERBE : Sécurité fourragère assurée (${surfacePrairies.toFixed(1)} ha).`;
+        }
+
+        // MÉTEIL
         const saturationAlim = (besoinTroupeauTonnes / maxAlimTonnes) * 100;
         pctAlim.textContent = saturationAlim.toFixed(0) + "%";
         barAlim.style.width = Math.min(saturationAlim, 100) + "%";
-
         let tManquantes = 0;
         let coutAchatAlimentBio = 0;
-
         if (saturationAlim > 100) {
             tManquantes = besoinTroupeauTonnes - maxAlimTonnes;
             coutAchatAlimentBio = tManquantes * PRIX_TONNE_CONCENTRE_BIO;
-            barAlim.style.backgroundColor = 'rgb(213,137,37)'; // Alerte orange car l'achat extérieur compense le blocage physique
+            barAlim.style.backgroundColor = 'rgb(213,137,37)';
             feedAlim.className = "feedback-box status-warn";
-            feedAlim.textContent = `DÉFICIT ALIMENTAIRE : Manque ${tManquantes.toFixed(1)} t. de concentrés. Compensation automatique par achat extérieur Bio (Facture calculée ci-dessous).`;
-        } else if (saturationAlim < 75) {
-            barAlim.style.backgroundColor = 'rgb(98,180,234)';
-            feedAlim.className = "feedback-box status-info";
-            feedAlim.textContent = "EXCÉDENT MAJEUR : Terres larges. Vous pouvez valoriser ce grain sur l'atelier Volailles pour économiser l'achat extérieur !";
+            feedAlim.textContent = `DÉFICIT MÉTEIL : Besoin de ${besoinTroupeauTonnes.toFixed(1)} t. Manque ${tManquantes.toFixed(1)} t à acheter à l'extérieur.`;
         } else {
             barAlim.style.backgroundColor = 'rgb(179,206,53)';
             feedAlim.className = "feedback-box status-ok";
-            feedAlim.textContent = "ÉQUILIBRE : L'assolement en céréales/méteil couvre parfaitement le cheptel choisi.";
+            feedAlim.textContent = `AUTONOMIE MÉTEIL : Récolte interne de ${maxAlimTonnes.toFixed(1)} t suffisante pour couvrir le troupeau.`;
         }
 
-        // 3. CALCUL SEUIL TRAVAIL
-        const heuresNecessaires = brebis * 8; 
+        // MO (8.5h / brebis)
+        const heuresNecessaires = brebis * 8.5;
         const saturationTravail = (heuresNecessaires / totalHeuresDispo) * 100;
         pctTravail.textContent = saturationTravail.toFixed(0) + "%";
         barTravailFill.style.width = Math.min(saturationTravail, 100) + "%";
-
         if (saturationTravail > 105) {
             barTravailFill.style.backgroundColor = 'rgb(231,76,60)';
             feedTravail.className = "feedback-box status-crit";
-            feedTravail.textContent = `SURCHARGE HUMAINE : Manque de temps (${Math.round(heuresNecessaires - totalHeuresDispo)} h manquantes). Réduisez le troupeau ou embauchez du salariat.`;
-        } else if (saturationTravail < 75) {
-            barTravailFill.style.backgroundColor = 'rgb(213,137,37)';
-            feedTravail.className = "feedback-box status-warn";
-            feedTravail.textContent = "SOUS-EFFICIENCE : Le volume d'heures disponible est trop large par rapport aux besoins réels d'astreinte.";
+            feedTravail.textContent = "SURCHARGE : Temps de travail insuffisant pour garantir le suivi d'astreinte.";
         } else {
             barTravailFill.style.backgroundColor = 'rgb(179,206,53)';
             feedTravail.className = "feedback-box status-ok";
-            feedTravail.textContent = "COHÉRENCE RYTHME : Le ratio d'astreinte et de surveillance est maîtrisé.";
+            feedTravail.textContent = "CHARGE DE TRAVAIL MAÎTRISÉE : Équilibre exploitant respecté.";
         }
 
-        // DIAGNOSTIC GLOBAL ET BADGES POUR EXPORT COUPROD
-        let diag = "";
-        let badges = [];
+        // CALCUL IMPACT VIANDE
+        const kgCarcasseAgneaux = agneauxVendus * 18; 
+        const kgCarcasseReformes = brebisReforme * 28; 
+        const totalViandeVendue = kgCarcasseAgneaux + kgCarcasseReformes;
 
-        // Le bâtiment et le travail restent des barrières physiques bloquantes (>100% ou >105%)
         if (saturationBat > 100 || saturationTravail > 105) {
-            diag = "❌ <strong>Dimensionnement incorrect :</strong> Le système bloque face à une barrière physique (bâtiment) ou humaine (travail). Ajustez les curseurs ou ajoutez des investissements.";
+            globalDiag.innerHTML = "❌ Rupture de cohérence physique. L'exploitation subit des goulots d'étranglement structurels.";
+            impactTags.innerHTML = "";
         } else {
-            diag = "✅ <strong>Cadre technique validé !</strong> Vos choix de flux et de structure sont cohérents pour l'exploitation support. Reportez maintenant ces indicateurs dans votre étude sous <strong>Couprod</strong> :";
+            globalDiag.innerHTML = `📊 Bilan Zootechnique & Foncier Validé (${brebis} brebis présentes)`;
             
-            badges.push(`<span class="impact-badge" style="background:var(--blue-farm); color:white;">👉 Effectif à saisir : ${brebis} Brebis | Main-d'œuvre : ${umoExploit.toFixed(2)} UMO Expl. (${Math.round(heuresExploit)} h)</span>`);
+            let htmlBadges = [];
             
-            // Badge Alimentation (Dynamique si déficit)
-            if (coutAchatAlimentBio > 0) {
-                badges.push(`<span class="impact-badge" style="background:var(--red-alert); color:white;">🌾 ALIMENTATION (Achat Extérieur BIO) | Charges (EBE) : Ajouter +${Math.round(coutAchatAlimentBio)} € en achats d'aliments (Volume : ${tManquantes.toFixed(1)} t. à ${PRIX_TONNE_CONCENTRE_BIO} €/t)</span>`);
+            htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--blue-farm);">
+                <strong>📦 Flux de l'Atelier Ovin :</strong><br>
+                • Agneaux nés : ${agneauxNes} têtes<br>
+                • Agneaux sevrés : ${agneauxSevres} têtes<br>
+                • Renouvellement (Agnelles gardées) : ${agnellesGardees} têtes
+            </div>`);
+
+            htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--blue-farm);">
+                <strong>🥩 Volumes Commercialisés (Couprod) :</strong><br>
+                • Agneaux de boucherie vendus : <strong>${agneauxVendus} têtes</strong> (${kgCarcasseAgneaux.toLocaleString()} kg carcasse)<br>
+                • Brebis de réforme vendues : <strong>${brebisReforme} têtes</strong> (${kgCarcasseReformes.toLocaleString()} kg carcasse)<br>
+                • Total viande nette sortie : <strong>${totalViandeVendue.toLocaleString()} kg</strong>
+            </div>`);
+
+            htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--green-farm);">
+                <strong>🌾 Assolement & Besoins de l'Auge :</strong><br>
+                • Surface Méteil totale : <strong>${surfaceMeteil.toFixed(1)} ha</strong> (Rendement : 25,15 qx/ha)<br>
+                • Surface SFP (PT + PP) totale : <strong>${surfacePrairies.toFixed(1)} ha</strong><br>
+                • Consommation troupeau : <strong>${besoinTroupeauTonnes.toFixed(1)} t</strong> de concentrés et <strong>${besoinFourrageTonnes.toFixed(1)} t MS</strong> de foin.
+            </div>`);
+
+            if (coutAchatAlimentBio > 0 || coutAchatFoin > 0) {
+                let detailsAchats = "";
+                if (coutAchatAlimentBio > 0) detailsAchats += `• Concentrés : +${Math.round(coutAchatAlimentBio).toLocaleString()} €/an (${tManquantes.toFixed(1)} t)<br>`;
+                if (coutAchatFoin > 0) detailsAchats += `• Foin / Fourrages : +${Math.round(coutAchatFoin).toLocaleString()} €/an (${foinManquant.toFixed(1)} t MS)<br>`;
+                
+                htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--orange-farm);">
+                    <strong>💰 Dégradation de l'Autonomie Financière :</strong><br>
+                    ${detailsAchats}
+                    • Total surcoût achats extérieurs : <span style="color:var(--orange-farm); font-weight:bold;">${Math.round(coutAchatAlimentBio + coutAchatFoin).toLocaleString()} €/an</span>
+                </div>`);
+            } else {
+                htmlBadges.push(`<div class="impact-badge" style="border-left-color: var(--green-farm);">
+                    <strong>☀️ Autonomie Système Complète :</strong><br>
+                    • Coût d'achat de fourrages & grains : <strong>0 €</strong>.<br>
+                    • L'assolement actuel permet de fermer complètement les cycles intrants.
+                </div>`);
             }
 
-            if (nbLotsBat > 0) {
-                const totalDap = nbLotsBat * 1800;
-                const totalInt = nbLotsBat * 360;
-                const totalCap = nbLotsBat * 1675;
-                badges.push(`<span class="impact-badge" style="background:var(--orange-farm); color:white;">🏢 BATIMENT (${nbLotsBat} lot(s)) | Charges (EBE) : DAP +${totalDap} € , Intérêts +${totalInt} € | Trésorerie : Sortie Capital +${totalCap} €/an</span>`);
-            }
-            if (nbLotsFoncier > 0) {
-                const ha = nbLotsFoncier * 10;
-                const fermage = nbLotsFoncier * 1300;
-                const semences = nbLotsFoncier * 150 * 10;
-                const meca = nbLotsFoncier * 170 * 10;
-                const carb = nbLotsFoncier * 70 * 10;
-                const totalFoncier = fermage + semences + meca + carb;
-                badges.push(`<span class="impact-badge" style="background:var(--orange-farm); color:white;">🌱 FONCIER (+${ha} ha) | Charges globales : +${totalFoncier} €/an (dont Fermages: ${fermage}€, Semences: ${semences}€, Méca: ${meca}€, Carburant: ${carb}€)</span>`);
-            }
-            if (nbLotsSalarie > 0) {
-                const totalSal = nbLotsSalarie * 5700;
-                badges.push(`<span class="impact-badge" style="background:var(--orange-farm); color:white;">💼 SALARIAT (+${(nbLotsSalarie * 0.25).toFixed(2)} UMO / +${nbLotsSalarie * 400} h) | Charges de personnel : +${totalSal} €/an (Base SMIC complet chargé)</span>`);
-            }
+            impactTags.innerHTML = htmlBadges.join('');
         }
-
-        globalDiag.innerHTML = diag;
-        impactTags.innerHTML = badges.join(' ');
     }
 
-    // Abonnements aux modifications
-    inputBrebis.addEventListener('input', recalculer);
-    inputUmo.addEventListener('input', recalculer);
-    qtyBat.addEventListener('change', recalculer);
-    qtyFoncier.addEventListener('change', recalculer);
-    qtySalarie.addEventListener('change', recalculer);
+    [inputBrebis, inputUmo, inputProlificite, inputMortalite, inputRenouvellement].forEach(input => {
+        input.addEventListener('input', recalculer);
+    });
+    [qtyBat, qtyPrairie, qtyMeteil, qtySalarie].forEach(select => {
+        select.addEventListener('change', recalculer);
+    });
 
-    // Initialisation
     recalculer();
 </script>
 
